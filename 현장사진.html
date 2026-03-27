@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>현장사진</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+
+:root {
+  --bg:       #F4F2EE;
+  --card:     #FFFFFF;
+  --border:   #DDD9D0;
+  --accent:   #D4500A;
+  --accent2:  #A83D07;
+  --text:     #1A1714;
+  --muted:    #857F77;
+  --success:  #2E7D32;
+  --error:    #C62828;
+  --r:        14px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  height: 100%;
+  font-family: 'Noto Sans KR', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overscroll-behavior: none;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  max-width: 430px;
+  margin: 0 auto;
+  background: var(--bg);
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px 10px;
+  padding-top: calc(14px + env(safe-area-inset-top, 0px));
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.topbar-left { display: flex; align-items: center; gap: 10px; }
+.logo {
+  width: 34px; height: 34px;
+  background: var(--accent);
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px;
+}
+.topbar-title { font-size: 16px; font-weight: 700; }
+.topbar-sub   { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+.auth-badge {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--muted);
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 20px; padding: 5px 10px;
+  cursor: pointer; transition: all .15s;
+}
+.auth-badge.connected { color: var(--success); border-color: #A5D6A7; background: #F1F8E9; }
+.auth-badge .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--muted); flex-shrink: 0;
+}
+.auth-badge.connected .dot { background: var(--success); }
+
+.scroll-body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.card {
+  background: var(--card);
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.card-header {
+  padding: 12px 14px 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.photo-zone {
+  position: relative;
+  padding: 22px 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: background .15s;
+}
+.photo-zone:active { background: #FAF7F3; }
+.photo-zone input[type=file] {
+  position: absolute; inset: 0; opacity: 0;
+  width: 100%; height: 100%; cursor: pointer;
+}
+.photo-zone-icon { font-size: 38px; margin-bottom: 8px; line-height: 1; }
+.photo-zone-text { font-size: 15px; font-weight: 700; }
+.photo-zone-hint { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+.preview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  padding: 0 0 2px;
+}
+.thumb {
+  position: relative;
+  aspect-ratio: 1;
+  background: var(--border);
+  overflow: hidden;
+}
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.thumb .del {
+  position: absolute; top: 3px; right: 3px;
+  width: 20px; height: 20px;
+  background: rgba(0,0,0,.6);
+  color: #fff; border: none; border-radius: 50%;
+  font-size: 11px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.thumb .num {
+  position: absolute; bottom: 3px; left: 3px;
+  background: rgba(0,0,0,.55); color: #fff;
+  font-size: 10px; border-radius: 4px; padding: 1px 5px;
+}
+.add-more {
+  aspect-ratio: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  background: var(--bg);
+  font-size: 22px; color: var(--muted);
+  cursor: pointer; position: relative;
+}
+.add-more input { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+
+.field-inner { padding: 10px 14px 14px; }
+textarea, input[type=text] {
+  width: 100%;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 15px;
+  padding: 11px 13px;
+  outline: none;
+  transition: border-color .15s;
+  -webkit-appearance: none;
+}
+textarea:focus, input[type=text]:focus { border-color: var(--accent); }
+textarea { resize: none; min-height: 72px; }
+
+.filename-preview {
+  margin: 0 14px 14px;
+  background: #FFF8F3;
+  border: 1px solid #F0C9A8;
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 12px;
+  color: var(--accent2);
+  display: flex; align-items: center; gap: 6px;
+  font-variant-numeric: tabular-nums;
+  word-break: break-all;
+}
+
+.date-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px;
+  font-size: 13px; color: var(--muted);
+}
+.date-bar .date-val { font-weight: 700; color: var(--text); font-size: 14px; }
+
+.progress-card { display: none; }
+.progress-card.show { display: block; }
+.prog-bar-bg {
+  height: 5px; background: var(--border);
+  border-radius: 20px; overflow: hidden;
+  margin: 10px 14px 0;
+}
+.prog-bar-fill {
+  height: 100%; background: var(--accent);
+  border-radius: 20px; width: 0%;
+  transition: width .3s ease;
+}
+.prog-label { font-size: 12px; color: var(--muted); padding: 7px 14px 12px; }
+
+.log-item {
+  padding: 11px 14px;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 13px;
+}
+.log-item:first-child { border-top: none; }
+.log-icon { font-size: 16px; flex-shrink: 0; }
+.log-name { font-weight: 500; word-break: break-all; }
+.log-link { font-size: 11px; color: var(--accent); margin-top: 2px; }
+.log-link a { color: inherit; text-decoration: none; }
+
+.bottom-bar {
+  padding: 10px 14px;
+  padding-bottom: calc(10px + var(--safe-bottom));
+  background: var(--card);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.upload-btn {
+  width: 100%; padding: 16px;
+  background: var(--accent); color: #fff;
+  border: none; border-radius: 12px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 16px; font-weight: 700;
+  cursor: pointer;
+  transition: background .15s, transform .1s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  -webkit-appearance: none;
+}
+.upload-btn:active { background: var(--accent2); transform: scale(.98); }
+.upload-btn:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; transform: none; }
+
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,.5);
+  align-items: flex-end; justify-content: center;
+}
+.modal-overlay.show { display: flex; }
+.modal-sheet {
+  background: var(--card);
+  border-radius: 20px 20px 0 0;
+  width: 100%; max-width: 430px;
+  padding: 20px 18px calc(20px + env(safe-area-inset-bottom, 0px));
+  max-height: 80dvh; overflow-y: auto;
+}
+.modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 18px; }
+.modal-title { font-size: 16px; font-weight: 700; margin-bottom: 14px; }
+.modal-label { font-size: 12px; color: var(--muted); font-weight: 700; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 6px; }
+.modal-field { margin-bottom: 16px; }
+.modal-note { font-size: 12px; color: var(--muted); line-height: 1.7; background: var(--bg); border-radius: 8px; padding: 10px 12px; margin-bottom: 16px; }
+.modal-note a { color: var(--accent); }
+.modal-btn { width: 100%; padding: 14px; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans KR', sans-serif; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.card { animation: fadeUp .25s ease both; }
+.card:nth-child(2) { animation-delay: .05s; }
+.card:nth-child(3) { animation-delay: .1s; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="logo">🏗</div>
+      <div>
+        <div class="topbar-title">현장사진</div>
+        <div class="topbar-sub">우이신설 연장선</div>
+      </div>
+    </div>
+    <div class="auth-badge" id="authBadge" onclick="openSettings()">
+      <div class="dot"></div>
+      <span id="authLabel">설정 필요</span>
+    </div>
+  </div>
+
+  <div class="scroll-body">
+    <div class="card" id="photoCard">
+      <div id="dropArea">
+        <div class="photo-zone" id="photoZone">
+          <input type="file" accept="image/*" multiple capture="environment" id="fileInput" onchange="handleFiles(this.files)">
+          <div class="photo-zone-icon">📷</div>
+          <div class="photo-zone-text">사진 선택 / 촬영</div>
+          <div class="photo-zone-hint">여러 장 동시 선택 가능</div>
+        </div>
+      </div>
+      <div class="preview-grid" id="previewGrid" style="display:none"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header" style="padding-bottom:8px">사진 설명</div>
+      <div class="field-inner" style="padding-top:8px">
+        <textarea id="desc" placeholder="예) 방학역 환기구 배근 현황&#10;예) 비개착 구간 지보공 설치 완료" rows="3" oninput="updateFilename()"></textarea>
+      </div>
+      <div class="filename-preview" id="filenamePreview">
+        🗂 <span id="previewName">20260327_설명입력.jpg</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="date-bar">
+        <span>📅</span>
+        <span>촬영일</span>
+        <span class="date-val" id="dateVal"></span>
+        <span style="margin-left:auto;font-size:11px;color:var(--muted)">자동 설정</span>
+      </div>
+    </div>
+
+    <div class="card progress-card" id="progressCard">
+      <div class="card-header" style="padding:12px 14px 0">업로드 현황</div>
+      <div class="prog-bar-bg"><div class="prog-bar-fill" id="progFill"></div></div>
+      <div class="prog-label" id="progLabel">대기 중</div>
+      <div id="logContainer"></div>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <button class="upload-btn" id="uploadBtn" onclick="startUpload()" disabled>
+      ☁️ Google Drive에 저장
+    </button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="settingsModal" onclick="closeSettingsOnBg(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">⚙️ Google Drive 연결 설정</div>
+    <div class="modal-note">
+      OAuth 클라이언트 ID와 API 키를 입력하세요.
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">OAuth 클라이언트 ID</div>
+      <input type="text" id="inputClientId" placeholder="xxxx.apps.googleusercontent.com">
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">API 키</div>
+      <input type="text" id="inputApiKey" placeholder="AIza...">
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">저장 폴더 이름</div>
+      <input type="text" id="inputFolder" placeholder="우이신설연장선_현장사진">
+    </div>
+    <button class="modal-btn" onclick="saveSettings()">저장 후 로그인</button>
+  </div>
+</div>
+
+<script>
+let CFG = {
+  clientId:   localStorage.getItem('cfg_clientId')  || '793231860253-if6tnc2m7c7o86s3phsgbapihnemfin3.apps.googleusercontent.com',
+  apiKey:     localStorage.getItem('cfg_apiKey')    || 'AIzaSyAEf-l5xHWmluxq3N9eiSOZRTd9_nFvQ7c',
+  folderName: localStorage.getItem('cfg_folder')    || '우이신설연장선_현장사진',
+};
+
+let accessToken = null, tokenClient = null, gapiReady = false, files = [];
+
+function today()        { return new Date().toISOString().slice(0,10); }
+function todayCompact() { return today().replace(/-/g,''); }
+document.getElementById('dateVal').textContent = today();
+
+function updateFilename() {
+  const desc  = document.getElementById('desc').value.trim();
+  const safe  = desc ? desc.replace(/[\/\\:*?"<>| \t]/g,'').slice(0,30) : '사진';
+  const ext   = files.length ? files[0].file.name.split('.').pop() : 'jpg';
+  const multi = files.length > 1 ? '_01' : '';
+  document.getElementById('previewName').textContent = `${todayCompact()}_${safe}${multi}.${ext}`;
+}
+
+function handleFiles(fl) {
+  for (const f of fl)
+    if (!files.find(x => x.file.name===f.name && x.file.size===f.size))
+      files.push({ file: f, url: URL.createObjectURL(f) });
+  renderGrid(); updateFilename(); maybeEnableBtn();
+}
+
+function renderGrid() {
+  const grid = document.getElementById('previewGrid');
+  const zone = document.getElementById('photoZone');
+  if (files.length === 0) { grid.style.display='none'; zone.style.display=''; return; }
+  zone.style.display = 'none';
+  grid.style.display = 'grid';
+  grid.innerHTML = '';
+  files.forEach(({file,url},i) => {
+    const d = document.createElement('div');
+    d.className = 'thumb';
+    d.innerHTML = `<img src="${url}" alt=""><button class="del" onclick="removeFile(${i})">✕</button><span class="num">${i+1}</span>`;
+    grid.appendChild(d);
+  });
+  const add = document.createElement('div');
+  add.className = 'add-more';
+  add.innerHTML = `<input type="file" accept="image/*" multiple onchange="handleFiles(this.files)">+`;
+  grid.appendChild(add);
+}
+
+function removeFile(i) {
+  URL.revokeObjectURL(files[i].url); files.splice(i,1);
+  renderGrid(); updateFilename();
+  if (!files.length) document.getElementById('uploadBtn').disabled = true;
+}
+
+function loadGapi() {
+  if (!CFG.clientId || !CFG.apiKey) return;
+  const s1 = document.createElement('script');
+  s1.src = 'https://apis.google.com/js/api.js';
+  s1.onload = () => gapi.load('client', async () => {
+    await gapi.client.init({ apiKey: CFG.apiKey, discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'] });
+    gapiReady = true; initTokenClient();
+  });
+  document.head.appendChild(s1);
+  const s2 = document.createElement('script');
+  s2.src = 'https://accounts.google.com/gsi/client';
+  document.head.appendChild(s2);
+}
+
+function initTokenClient() {
+  if (!window.google) { setTimeout(initTokenClient, 300); return; }
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CFG.clientId,
+    scope: 'https://www.googleapis.com/auth/drive.file',
+    callback: resp => {
+      if (resp.error) { alert('로그인 실패: ' + resp.error); return; }
+      accessToken = resp.access_token;
+      gapi.client.setToken({ access_token: accessToken });
+      setConnected(true); maybeEnableBtn();
+      document.getElementById('settingsModal').classList.remove('show');
+    }
+  });
+  tokenClient.requestAccessToken({ prompt: '' });
+}
+
+function setConnected(ok) {
+  document.getElementById('authBadge').classList.toggle('connected', ok);
+  document.getElementById('authLabel').textContent = ok ? '연결됨' : '설정 필요';
+}
+
+function maybeEnableBtn() {
+  document.getElementById('uploadBtn').disabled = !(accessToken && files.length);
+}
+
+async function startUpload() {
+  if (!accessToken || !files.length) return;
+  const desc = document.getElementById('desc').value.trim();
+  const safe = desc ? desc.replace(/[\/\\:*?"<>| \t]/g,'').slice(0,30) : '사진';
+  document.getElementById('uploadBtn').disabled = true;
+  document.getElementById('progressCard').classList.add('show');
+  document.getElementById('logContainer').innerHTML = '';
+  try {
+    setProgress(5, '폴더 확인 중...');
+    const folderId = await getOrCreateFolder(CFG.folderName, 'root');
+    for (let i = 0; i < files.length; i++) {
+      const {file} = files[i];
+      setProgress(Math.round(10 + (i/files.length)*85), `업로드 중 (${i+1}/${files.length})`);
+      const ext   = file.name.split('.').pop();
+      const num   = files.length > 1 ? `_${String(i+1).padStart(2,'0')}` : '';
+      const fname = `${todayCompact()}_${safe}${num}.${ext}`;
+      const id    = await uploadFile(file, fname, folderId);
+      addLog('✅', fname, `https://drive.google.com/file/d/${id}/view`);
+    }
+    setProgress(100, `완료 — ${files.length}장 저장됨`);
+    files = []; renderGrid(); updateFilename();
+    document.getElementById('desc').value = '';
+  } catch(e) {
+    addLog('❌', '오류: ' + (e.message||e));
+    setProgress(0, '업로드 실패');
+  }
+  document.getElementById('uploadBtn').disabled = true;
+}
+
+async function getOrCreateFolder(name, parent) {
+  const q = `name='${name}' and mimeType='application/vnd.google-apps.folder' and '${parent}' in parents and trashed=false`;
+  const r = await gapi.client.drive.files.list({ q, fields:'files(id)', spaces:'drive' });
+  if (r.result.files.length) return r.result.files[0].id;
+  const c = await gapi.client.drive.files.create({ resource:{ name, mimeType:'application/vnd.google-apps.folder', parents:[parent] }, fields:'id' });
+  return c.result.id;
+}
+
+async function uploadFile(file, fname, folderId) {
+  const form = new FormData();
+  form.append('metadata', new Blob([JSON.stringify({ name: fname, parents: [folderId] })], {type:'application/json'}));
+  form.append('file', file);
+  const r = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', {
+    method:'POST', headers:{ Authorization:`Bearer ${accessToken}` }, body:form
+  });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return (await r.json()).id;
+}
+
+function setProgress(pct, label) {
+  document.getElementById('progFill').style.width = pct+'%';
+  document.getElementById('progLabel').textContent = label;
+}
+
+function addLog(icon, name, link) {
+  const d = document.createElement('div');
+  d.className = 'log-item';
+  d.innerHTML = `<span class="log-icon">${icon}</span><div><div class="log-name">${name}</div>${link?`<div class="log-link"><a href="${link}" target="_blank">Drive에서 열기 →</a></div>`:''}</div>`;
+  document.getElementById('logContainer').appendChild(d);
+}
+
+function openSettings() {
+  document.getElementById('inputClientId').value = CFG.clientId;
+  document.getElementById('inputApiKey').value   = CFG.apiKey;
+  document.getElementById('inputFolder').value   = CFG.folderName;
+  document.getElementById('settingsModal').classList.add('show');
+}
+
+function closeSettingsOnBg(e) {
+  if (e.target === document.getElementById('settingsModal'))
+    document.getElementById('settingsModal').classList.remove('show');
+}
+
+function saveSettings() {
+  CFG.clientId   = document.getElementById('inputClientId').value.trim();
+  CFG.apiKey     = document.getElementById('inputApiKey').value.trim();
+  CFG.folderName = document.getElementById('inputFolder').value.trim() || '우이신설연장선_현장사진';
+  localStorage.setItem('cfg_clientId', CFG.clientId);
+  localStorage.setItem('cfg_apiKey',   CFG.apiKey);
+  localStorage.setItem('cfg_folder',   CFG.folderName);
+  if (!CFG.clientId || !CFG.apiKey) { alert('ID와 API 키를 모두 입력하세요.'); return; }
+  loadGapi();
+}
+
+window.addEventListener('load', () => {
+  updateFilename();
+  if (CFG.clientId && CFG.apiKey) loadGapi();
+  else openSettings();
+});
+</script>
+</body>
+</html>
