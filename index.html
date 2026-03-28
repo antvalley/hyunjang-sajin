@@ -238,7 +238,7 @@ function initTokenClient() {
       document.getElementById('settingsModal').classList.remove('show');
     }
   });
-  tokenClient.requestAccessToken({prompt:''});
+  tokenClient.requestAccessToken({prompt:'consent'});
 }
 function setConnected(ok) {
   document.getElementById('authBadge').classList.toggle('connected',ok);
