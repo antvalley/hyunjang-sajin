@@ -272,7 +272,7 @@ async function startUpload() {
       const fname= `${todayCompact()}_${safe}${num}.${ext}`;
       const id   = await uploadFile(file,fname,folderId);
       const link = `https://drive.google.com/file/d/${id}/view`;
-      await appendToSheet(sheetId,tabName,datetime,desc||fname,link);
+      await appendToSheet(sheetId,tabName,datetime,desc||fname,link,id);
       addLog('✅',fname,link);
     }
     setProgress(100,`완료 — ${files.length}장 저장 + 시트 기록됨`);
@@ -300,7 +300,14 @@ async function uploadFile(file,fname,folderId) {
   form.append('file',file);
   const r=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',{method:'POST',headers:{Authorization:`Bearer ${accessToken}`},body:form});
   if (!r.ok) throw new Error('HTTP '+r.status);
-  return (await r.json()).id;
+  const {id} = await r.json();
+  // 링크 있는 사람 누구나 볼 수 있도록 권한 설정
+  await fetch(`https://www.googleapis.com/drive/v3/files/${id}/permissions`,{
+    method:'POST',
+    headers:{Authorization:`Bearer ${accessToken}`,'Content-Type':'application/json'},
+    body:JSON.stringify({role:'reader',type:'anyone'})
+  });
+  return id;
 }
 
 // ── Sheets ──
@@ -338,7 +345,7 @@ async function getOrCreateMonthTab(sheetId,tabName) {
   const newSheetId=added.replies[0].addSheet.properties.sheetId;
   await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(tabName)}!A1:C1?valueInputOption=USER_ENTERED`,{
     method:'PUT',headers:{Authorization:`Bearer ${accessToken}`,'Content-Type':'application/json'},
-    body:JSON.stringify({values:[['날짜·시간','사진설명','Drive 링크']]})
+    body:JSON.stringify({values:[['날짜·시간','사진설명','Drive 링크','사진']]})
   });
   await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}:batchUpdate`,{
     method:'POST',headers:{Authorization:`Bearer ${accessToken}`,'Content-Type':'application/json'},
@@ -350,10 +357,11 @@ async function getOrCreateMonthTab(sheetId,tabName) {
   });
   return newSheetId;
 }
-async function appendToSheet(sheetId,tabName,datetime,desc,link) {
-  await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(tabName)}!A:C:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,{
+async function appendToSheet(sheetId,tabName,datetime,desc,link,fileId) {
+  const thumbFormula = `=IMAGE("https://drive.google.com/thumbnail?id=${fileId}&sz=w200")`;
+  await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(tabName)}!A:D:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,{
     method:'POST',headers:{Authorization:`Bearer ${accessToken}`,'Content-Type':'application/json'},
-    body:JSON.stringify({values:[[datetime,desc,link]]})
+    body:JSON.stringify({values:[[datetime,desc,link,thumbFormula]]})
   });
 }
 
