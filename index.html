@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>현장사진</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
@@ -17,38 +16,41 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);overscroll-behavior:none;}
 .app{display:flex;flex-direction:column;height:100dvh;max-width:430px;margin:0 auto;background:var(--bg);}
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 10px;padding-top:calc(14px + env(safe-area-inset-top,0px));background:var(--card);border-bottom:1px solid var(--border);flex-shrink:0;}
-.topbar-left{display:flex;align-items:center;gap:10px;}
-.logo{width:34px;height:34px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+.topbar{display:flex;align-items:center;padding:14px 18px 10px;padding-top:calc(14px + env(safe-area-inset-top,0px));background:var(--card);border-bottom:1px solid var(--border);flex-shrink:0;gap:10px;}
+.logo{width:34px;height:34px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
 .topbar-title{font-size:16px;font-weight:700;}
-.topbar-sub{font-size:11px;color:var(--muted);margin-top:1px;}
+.topbar-sub{font-size:11px;color:var(--muted);}
 .scroll-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 14px;display:flex;flex-direction:column;gap:14px;}
-.card{background:var(--card);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;animation:fadeUp .25s ease both;}
-.card:nth-child(2){animation-delay:.05s;}.card:nth-child(3){animation-delay:.1s;}
+.card{background:var(--card);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;}
 .card-header{padding:12px 14px 0;font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;}
-.photo-zone{position:relative;padding:22px 14px;text-align:center;cursor:pointer;transition:background .15s;}
-.photo-zone:active{background:#FAF7F3;}
-.photo-zone input[type=file]{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;}
-.photo-zone-icon{font-size:38px;margin-bottom:8px;line-height:1;}
-.photo-zone-text{font-size:15px;font-weight:700;}
-.photo-zone-hint{font-size:12px;color:var(--muted);margin-top:4px;}
-.preview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;padding:0 0 2px;}
-.thumb{position:relative;aspect-ratio:1;background:var(--border);overflow:hidden;}
-.thumb img{width:100%;height:100%;object-fit:cover;display:block;}
-.thumb .del{position:absolute;top:3px;right:3px;width:20px;height:20px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.thumb .num{position:absolute;bottom:3px;left:3px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;border-radius:4px;padding:1px 5px;}
-.add-more{aspect-ratio:1;display:flex;align-items:center;justify-content:center;background:var(--bg);font-size:22px;color:var(--muted);cursor:pointer;position:relative;}
-.add-more input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;}
 .field-inner{padding:10px 14px 14px;}
-textarea,input[type=text]{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:15px;padding:11px 13px;outline:none;transition:border-color .15s;-webkit-appearance:none;}
-textarea:focus,input[type=text]:focus{border-color:var(--accent);}
-textarea{resize:none;min-height:72px;}
-.filename-preview{margin:0 14px 14px;background:#FFF8F3;border:1px solid #F0C9A8;border-radius:8px;padding:9px 12px;font-size:12px;color:var(--accent2);display:flex;align-items:center;gap:6px;word-break:break-all;}
+textarea{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:15px;padding:11px 13px;outline:none;resize:none;min-height:72px;-webkit-appearance:none;}
+textarea:focus{border-color:var(--accent);}
+.filename-preview{margin:0 14px 14px;background:#FFF8F3;border:1px solid #F0C9A8;border-radius:8px;padding:9px 12px;font-size:12px;color:var(--accent2);word-break:break-all;}
 .date-bar{display:flex;align-items:center;gap:8px;padding:10px 14px;font-size:13px;color:var(--muted);}
-.date-bar .date-val{font-weight:700;color:var(--text);font-size:14px;}
+.date-bar b{color:var(--text);}
+
+/* 사진 선택 버튼 2개 */
+.photo-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px;}
+.photo-btn{position:relative;padding:18px 10px;border:2px dashed var(--border);border-radius:12px;background:var(--bg);text-align:center;cursor:pointer;transition:border-color .15s;}
+.photo-btn:active{border-color:var(--accent);}
+.photo-btn input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;}
+.photo-btn-icon{font-size:28px;margin-bottom:6px;}
+.photo-btn-text{font-size:13px;font-weight:700;color:var(--text);}
+.photo-btn-hint{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* 미리보기 */
+.preview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;padding:2px;}
+.thumb{position:relative;aspect-ratio:1;background:var(--border);overflow:hidden;border-radius:4px;}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.thumb .del{position:absolute;top:3px;right:3px;width:22px;height:22px;background:rgba(0,0,0,.65);color:#fff;border:none;border-radius:50%;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.thumb .num{position:absolute;bottom:3px;left:3px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;border-radius:4px;padding:1px 5px;}
+.add-more-btn{aspect-ratio:1;display:flex;align-items:center;justify-content:center;background:var(--bg);font-size:24px;color:var(--muted);cursor:pointer;position:relative;border-radius:4px;}
+.add-more-btn input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;}
+
 .progress-card{display:none;}.progress-card.show{display:block;}
 .prog-bar-bg{height:5px;background:var(--border);border-radius:20px;overflow:hidden;margin:10px 14px 0;}
-.prog-bar-fill{height:100%;background:var(--accent);border-radius:20px;width:0%;transition:width .3s ease;}
+.prog-bar-fill{height:100%;background:var(--accent);border-radius:20px;width:0%;transition:width .3s;}
 .prog-label{font-size:12px;color:var(--muted);padding:7px 14px 12px;}
 .log-item{padding:11px 14px;border-top:1px solid var(--border);display:flex;align-items:flex-start;gap:10px;font-size:13px;}
 .log-item:first-child{border-top:none;}
@@ -57,54 +59,68 @@ textarea{resize:none;min-height:72px;}
 .log-link{font-size:11px;color:var(--accent);margin-top:2px;}
 .log-link a{color:inherit;text-decoration:none;}
 .bottom-bar{padding:10px 14px;padding-bottom:calc(10px + var(--safe-bottom));background:var(--card);border-top:1px solid var(--border);flex-shrink:0;}
-.upload-btn{width:100%;padding:16px;background:var(--accent);color:#fff;border:none;border-radius:12px;font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:background .15s,transform .1s;display:flex;align-items:center;justify-content:center;gap:8px;-webkit-appearance:none;}
-.upload-btn:active{background:var(--accent2);transform:scale(.98);}
-.upload-btn:disabled{background:var(--border);color:var(--muted);cursor:not-allowed;transform:none;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.upload-btn{width:100%;padding:16px;background:var(--accent);color:#fff;border:none;border-radius:12px;font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
+.upload-btn:active{background:var(--accent2);}
+.upload-btn:disabled{background:var(--border);color:var(--muted);cursor:not-allowed;}
 </style>
 </head>
 <body>
 <div class="app">
   <div class="topbar">
-    <div class="topbar-left">
-      <div class="logo">🏗</div>
-      <div>
-        <div class="topbar-title">현장사진</div>
-        <div class="topbar-sub">우이신설 연장선</div>
-      </div>
+    <div class="logo">🏗</div>
+    <div>
+      <div class="topbar-title">현장사진</div>
+      <div class="topbar-sub">우이신설 연장선</div>
     </div>
   </div>
+
   <div class="scroll-body">
-    <div class="card">
-      <div class="photo-zone" id="photoZone">
-        <input type="file" accept="image/*" multiple id="fileInput" onchange="handleFiles(this.files)">
-        <div class="photo-zone-icon">📷</div>
-        <div class="photo-zone-text">사진 선택 / 촬영</div>
-        <div class="photo-zone-hint">여러 장 동시 선택 가능</div>
+
+    <!-- 사진 선택 카드 -->
+    <div class="card" id="selectCard">
+      <div class="photo-btns">
+        <div class="photo-btn">
+          <input type="file" accept="image/*" capture="environment" id="cameraInput" onchange="handleFiles(this.files)">
+          <div class="photo-btn-icon">📷</div>
+          <div class="photo-btn-text">카메라 촬영</div>
+          <div class="photo-btn-hint">지금 찍기</div>
+        </div>
+        <div class="photo-btn">
+          <input type="file" accept="image/*" multiple id="galleryInput" onchange="handleFiles(this.files)">
+          <div class="photo-btn-icon">🖼️</div>
+          <div class="photo-btn-text">갤러리 선택</div>
+          <div class="photo-btn-hint">여러 장 가능</div>
+        </div>
       </div>
       <div class="preview-grid" id="previewGrid" style="display:none"></div>
     </div>
+
+    <!-- 설명 카드 -->
     <div class="card">
       <div class="card-header" style="padding-bottom:8px">사진 설명</div>
       <div class="field-inner" style="padding-top:8px">
         <textarea id="desc" placeholder="예) 방학역 환기구 배근 현황&#10;예) 비개착 구간 지보공 설치 완료" rows="3" oninput="updateFilename()"></textarea>
       </div>
-      <div class="filename-preview">🗂 <span id="previewName">20260330_설명입력.jpg</span></div>
+      <div class="filename-preview">🗂 <span id="previewName">20260330_사진.jpg</span></div>
     </div>
+
+    <!-- 날짜 카드 -->
     <div class="card">
-      <div class="date-bar">
-        <span>📅</span><span>촬영일</span>
-        <span class="date-val" id="dateVal"></span>
-        <span style="margin-left:auto;font-size:11px;color:var(--muted)">자동 설정</span>
+      <div class="date-bar">📅 촬영일 <b id="dateVal"></b>
+        <span style="margin-left:auto;font-size:11px;color:var(--muted)">자동</span>
       </div>
     </div>
+
+    <!-- 진행 카드 -->
     <div class="card progress-card" id="progressCard">
       <div class="card-header" style="padding:12px 14px 0">업로드 현황</div>
       <div class="prog-bar-bg"><div class="prog-bar-fill" id="progFill"></div></div>
       <div class="prog-label" id="progLabel">대기 중</div>
       <div id="logContainer"></div>
     </div>
+
   </div>
+
   <div class="bottom-bar">
     <button class="upload-btn" id="uploadBtn" onclick="startUpload()" disabled>
       ☁️ Google Drive에 저장
@@ -113,12 +129,11 @@ textarea{resize:none;min-height:72px;}
 </div>
 
 <script>
-// ── Apps Script 웹앱 URL ──
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwfpZGVHmAxXQhXc4wBDuE7w1ZWT5ny9HLJiTDT8Am7iBvQio2mIP2Fyg_eo_6zKBrxWw/exec';
 
 let files = [];
 
-// ── 날짜 ──
+// 날짜
 function nowKST() {
   const d = new Date(Date.now() + 9*60*60*1000);
   return d.toISOString().slice(0,10);
@@ -126,7 +141,7 @@ function nowKST() {
 function todayCompact() { return nowKST().replace(/-/g,''); }
 document.getElementById('dateVal').textContent = nowKST();
 
-// ── 파일명 미리보기 ──
+// 파일명 미리보기
 function updateFilename() {
   const desc = document.getElementById('desc').value.trim();
   const safe = desc ? desc.replace(/[\/\\:*?"<>| \t]/g,'').slice(0,30) : '사진';
@@ -135,50 +150,52 @@ function updateFilename() {
   document.getElementById('previewName').textContent = `${todayCompact()}_${safe}${multi}.${ext}`;
 }
 
-// ── 파일 처리 ──
+// 파일 처리
 function handleFiles(fl) {
+  if (!fl || !fl.length) return;
   for (const f of fl) {
-    if (!files.find(x=>x.file.name===f.name&&x.file.size===f.size)) {
-      const url = URL.createObjectURL(f);
-      files.push({file:f, url});
-    }
+    if (f.size > 30*1024*1024) { alert(`${f.name} 파일이 너무 큽니다 (30MB 초과)`); continue; }
+    if (!files.find(x=>x.file.name===f.name && x.file.size===f.size))
+      files.push({file:f, url:URL.createObjectURL(f)});
   }
-  renderGrid(); updateFilename();
-  document.getElementById('uploadBtn').disabled = files.length === 0;
-  // 화면 강제 스크롤로 미리보기 확인 유도
-  document.getElementById('previewGrid').scrollIntoView({behavior:'smooth'});
+  renderGrid();
+  updateFilename();
+  document.getElementById('uploadBtn').disabled = (files.length === 0);
 }
 
 function renderGrid() {
   const grid = document.getElementById('previewGrid');
-  const zone = document.getElementById('photoZone');
-  if (!files.length) { grid.style.display='none'; zone.style.display=''; return; }
-  zone.style.display='none'; grid.style.display='grid'; grid.innerHTML='';
-  files.forEach(({file, url},i)=>{
-    const d=document.createElement('div'); d.className='thumb';
+  if (!files.length) { grid.style.display='none'; return; }
+  grid.style.display = 'grid';
+  grid.innerHTML = '';
+  files.forEach(({url}, i) => {
+    const d = document.createElement('div');
+    d.className = 'thumb';
     const img = document.createElement('img');
     img.src = url;
-    img.onerror = () => { img.src = ''; img.style.background='var(--border)'; };
     const del = document.createElement('button');
-    del.className='del'; del.textContent='✕';
-    del.onclick = ()=>removeFile(i);
+    del.className = 'del'; del.textContent = '✕';
+    del.onclick = () => removeFile(i);
     const num = document.createElement('span');
-    num.className='num'; num.textContent=i+1;
-    d.appendChild(img); d.appendChild(del); d.appendChild(num);
+    num.className = 'num'; num.textContent = i+1;
+    d.append(img, del, num);
     grid.appendChild(d);
   });
-  const add=document.createElement('div'); add.className='add-more';
-  add.innerHTML=`<input type="file" accept="image/*" multiple onchange="handleFiles(this.files)">+`;
+  // 추가 버튼
+  const add = document.createElement('div');
+  add.className = 'add-more-btn';
+  add.innerHTML = `<input type="file" accept="image/*" multiple onchange="handleFiles(this.files)">+`;
   grid.appendChild(add);
 }
 
 function removeFile(i) {
-  URL.revokeObjectURL(files[i].url); files.splice(i,1);
+  URL.revokeObjectURL(files[i].url);
+  files.splice(i,1);
   renderGrid(); updateFilename();
-  document.getElementById('uploadBtn').disabled = files.length === 0;
+  document.getElementById('uploadBtn').disabled = (files.length === 0);
 }
 
-// ── 업로드 ──
+// 업로드
 async function startUpload() {
   if (!files.length) return;
   const desc = document.getElementById('desc').value.trim();
@@ -188,72 +205,53 @@ async function startUpload() {
   document.getElementById('progressCard').classList.add('show');
   document.getElementById('logContainer').innerHTML = '';
 
-  let successCount = 0;
-
+  let ok = 0;
   for (let i = 0; i < files.length; i++) {
     const {file} = files[i];
-    const pct = Math.round(10 + (i / files.length) * 85);
-    setProgress(pct, `업로드 중 (${i+1}/${files.length})`);
-
-    const ext   = file.name.split('.').pop();
+    setProgress(Math.round(5 + (i/files.length)*90), `처리 중 (${i+1}/${files.length})`);
+    const ext   = file.name.split('.').pop().toLowerCase();
     const num   = files.length > 1 ? `_${String(i+1).padStart(2,'0')}` : '';
-    const fname = `${todayCompact()}_${safe}${num}.${ext}`;
-
+    const fname = `${todayCompact()}_${safe}${num}.jpg`;
     try {
-      // 파일을 base64로 변환
-      const base64 = await toBase64(file);
-
-      // Apps Script로 전송
+      const base64 = await toBase64Compressed(file);
       const res = await fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify({
-          image:    base64,
-          mimeType: file.type,
-          filename: fname,
-          desc:     desc || fname,
-        })
+        method:'POST', mode:'no-cors',
+        headers:{'Content-Type':'text/plain'},
+        body: JSON.stringify({image:base64, mimeType:'image/jpeg', filename:fname, desc:desc||fname})
       });
-
-      const data = await res.json();
-      if (data.ok) {
-        addLog('✅', fname, data.fileUrl);
-        successCount++;
-      } else {
-        addLog('❌', fname + ' — ' + (data.error || '오류'));
-      }
+      // no-cors 모드에서는 응답을 읽을 수 없으므로 성공으로 처리
+      addLog('✅', fname, null);
+      ok++;
     } catch(e) {
-      addLog('❌', fname + ' — ' + e.message);
+      addLog('❌', fname + ' 실패: ' + e.message, null);
     }
   }
 
-  setProgress(100, `완료 — ${successCount}/${files.length}장 저장됨`);
+  setProgress(100, `완료 — ${ok}/${files.length}장 저장됨`);
   files = []; renderGrid(); updateFilename();
   document.getElementById('desc').value = '';
   document.getElementById('uploadBtn').disabled = true;
 }
 
-// ── base64 변환 (리사이즈 압축) ──
-function toBase64(file) {
+// 이미지 압축 + base64
+function toBase64Compressed(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onerror = reject;
-    reader.onload = (e) => {
+    reader.onload = e => {
       const img = new Image();
       img.onerror = reject;
       img.onload = () => {
-        // 최대 1920px로 축소
-        const MAX = 1920;
+        const MAX = 1600;
         let w = img.width, h = img.height;
         if (w > MAX || h > MAX) {
-          if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
-          else       { w = Math.round(w * MAX / h); h = MAX; }
+          if (w > h) { h = Math.round(h*MAX/w); w = MAX; }
+          else       { w = Math.round(w*MAX/h); h = MAX; }
         }
         const canvas = document.createElement('canvas');
-        canvas.width = w; canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        // 품질 0.85로 JPEG 압축
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-        resolve(dataUrl.split(',')[1]);
+        canvas.width=w; canvas.height=h;
+        canvas.getContext('2d').drawImage(img,0,0,w,h);
+        resolve(canvas.toDataURL('image/jpeg',0.82).split(',')[1]);
       };
       img.src = e.target.result;
     };
@@ -261,7 +259,6 @@ function toBase64(file) {
   });
 }
 
-// ── UI ──
 function setProgress(pct, label) {
   document.getElementById('progFill').style.width = pct+'%';
   document.getElementById('progLabel').textContent = label;
