@@ -199,18 +199,14 @@ async function startUpload() {
     const fname = `${todayCompact()}_${safe}${num}.jpg`;
     try {
       const base64 = await toBase64Compressed(file);
-      const res = await fetch(APPS_SCRIPT_URL, {
+      await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
+        mode: 'no-cors',
         headers: {'Content-Type':'text/plain;charset=utf-8'},
         body: JSON.stringify({image:base64, mimeType:'image/jpeg', filename:fname, desc:desc||fname})
       });
-      const data = await res.json();
-      if (data.ok) {
-        addLog('✅', fname, data.fileUrl);
-        ok++;
-      } else {
-        addLog('❌', fname + ' — ' + (data.error||'오류'), null);
-      }
+      addLog('✅', fname, null);
+      ok++;
     } catch(e) {
       addLog('❌', fname + ' — ' + e.message, null);
     }
