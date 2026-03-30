@@ -215,13 +215,17 @@ async function startUpload() {
     try {
       const base64 = await toBase64Compressed(file);
       const res = await fetch(APPS_SCRIPT_URL, {
-        method:'POST', mode:'no-cors',
-        headers:{'Content-Type':'text/plain'},
+        method:'POST',
+        headers:{'Content-Type':'text/plain;charset=utf-8'},
         body: JSON.stringify({image:base64, mimeType:'image/jpeg', filename:fname, desc:desc||fname})
       });
-      // no-cors 모드에서는 응답을 읽을 수 없으므로 성공으로 처리
-      addLog('✅', fname, null);
-      ok++;
+      const data = await res.json();
+      if (data.ok) {
+        addLog('✅', fname, data.fileUrl);
+        ok++;
+      } else {
+        addLog('❌', fname + ' — ' + (data.error||'오류'), null);
+      }
     } catch(e) {
       addLog('❌', fname + ' 실패: ' + e.message, null);
     }
