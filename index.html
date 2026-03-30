@@ -226,6 +226,9 @@ async function startUpload() {
       } else {
         addLog('❌', fname + ' — ' + (data.error||'오류'), null);
       }
+      } else {
+        addLog('❌', fname + ' — ' + (data.error||'오류'), null);
+      }
     } catch(e) {
       addLog('❌', fname + ' 실패: ' + e.message, null);
     }
