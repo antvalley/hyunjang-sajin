@@ -137,11 +137,16 @@ function updateFilename() {
 
 // ── 파일 처리 ──
 function handleFiles(fl) {
-  for (const f of fl)
-    if (!files.find(x=>x.file.name===f.name&&x.file.size===f.size))
-      files.push({file:f, url:URL.createObjectURL(f)});
+  for (const f of fl) {
+    if (!files.find(x=>x.file.name===f.name&&x.file.size===f.size)) {
+      const url = URL.createObjectURL(f);
+      files.push({file:f, url});
+    }
+  }
   renderGrid(); updateFilename();
   document.getElementById('uploadBtn').disabled = files.length === 0;
+  // 화면 강제 스크롤로 미리보기 확인 유도
+  document.getElementById('previewGrid').scrollIntoView({behavior:'smooth'});
 }
 
 function renderGrid() {
@@ -149,9 +154,17 @@ function renderGrid() {
   const zone = document.getElementById('photoZone');
   if (!files.length) { grid.style.display='none'; zone.style.display=''; return; }
   zone.style.display='none'; grid.style.display='grid'; grid.innerHTML='';
-  files.forEach(({url},i)=>{
+  files.forEach(({file, url},i)=>{
     const d=document.createElement('div'); d.className='thumb';
-    d.innerHTML=`<img src="${url}"><button class="del" onclick="removeFile(${i})">✕</button><span class="num">${i+1}</span>`;
+    const img = document.createElement('img');
+    img.src = url;
+    img.onerror = () => { img.src = ''; img.style.background='var(--border)'; };
+    const del = document.createElement('button');
+    del.className='del'; del.textContent='✕';
+    del.onclick = ()=>removeFile(i);
+    const num = document.createElement('span');
+    num.className='num'; num.textContent=i+1;
+    d.appendChild(img); d.appendChild(del); d.appendChild(num);
     grid.appendChild(d);
   });
   const add=document.createElement('div'); add.className='add-more';
