@@ -11,7 +11,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
 :root {
   --bg:#F4F2EE;--card:#FFFFFF;--border:#DDD9D0;--accent:#D4500A;--accent2:#A83D07;
-  --text:#1A1714;--muted:#857F77;--success:#2E7D32;--error:#C62828;--r:14px;
+  --text:#1A1714;--muted:#857F77;--success:#2E7D32;--r:14px;
   --safe-bottom:env(safe-area-inset-bottom,0px);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -22,10 +22,6 @@ html,body{height:100%;font-family:'Noto Sans KR',sans-serif;background:var(--bg)
 .logo{width:34px;height:34px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;}
 .topbar-title{font-size:16px;font-weight:700;}
 .topbar-sub{font-size:11px;color:var(--muted);margin-top:1px;}
-.auth-badge{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:5px 10px;cursor:pointer;transition:all .15s;}
-.auth-badge.connected{color:var(--success);border-color:#A5D6A7;background:#F1F8E9;}
-.auth-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex-shrink:0;}
-.auth-badge.connected .dot{background:var(--success);}
 .scroll-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 14px;display:flex;flex-direction:column;gap:14px;}
 .card{background:var(--card);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;animation:fadeUp .25s ease both;}
 .card:nth-child(2){animation-delay:.05s;}.card:nth-child(3){animation-delay:.1s;}
@@ -41,7 +37,7 @@ html,body{height:100%;font-family:'Noto Sans KR',sans-serif;background:var(--bg)
 .thumb img{width:100%;height:100%;object-fit:cover;display:block;}
 .thumb .del{position:absolute;top:3px;right:3px;width:20px;height:20px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .thumb .num{position:absolute;bottom:3px;left:3px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;border-radius:4px;padding:1px 5px;}
-.add-more{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);font-size:22px;color:var(--muted);cursor:pointer;position:relative;}
+.add-more{aspect-ratio:1;display:flex;align-items:center;justify-content:center;background:var(--bg);font-size:22px;color:var(--muted);cursor:pointer;position:relative;}
 .add-more input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;}
 .field-inner{padding:10px 14px 14px;}
 textarea,input[type=text]{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:15px;padding:11px 13px;outline:none;transition:border-color .15s;-webkit-appearance:none;}
@@ -64,16 +60,6 @@ textarea{resize:none;min-height:72px;}
 .upload-btn{width:100%;padding:16px;background:var(--accent);color:#fff;border:none;border-radius:12px;font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:background .15s,transform .1s;display:flex;align-items:center;justify-content:center;gap:8px;-webkit-appearance:none;}
 .upload-btn:active{background:var(--accent2);transform:scale(.98);}
 .upload-btn:disabled{background:var(--border);color:var(--muted);cursor:not-allowed;transform:none;}
-.modal-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.5);align-items:flex-end;justify-content:center;}
-.modal-overlay.show{display:flex;}
-.modal-sheet{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-width:430px;padding:20px 18px calc(20px + env(safe-area-inset-bottom,0px));max-height:80dvh;overflow-y:auto;}
-.modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;}
-.modal-title{font-size:16px;font-weight:700;margin-bottom:14px;}
-.modal-label{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px;}
-.modal-field{margin-bottom:16px;}
-.modal-note{font-size:12px;color:var(--muted);line-height:1.7;background:var(--bg);border-radius:8px;padding:10px 12px;margin-bottom:16px;}
-.modal-note a{color:var(--accent);}
-.modal-btn{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
 </style>
 </head>
@@ -87,20 +73,14 @@ textarea{resize:none;min-height:72px;}
         <div class="topbar-sub">우이신설 연장선</div>
       </div>
     </div>
-    <div class="auth-badge" id="authBadge" onclick="openSettings()">
-      <div class="dot"></div>
-      <span id="authLabel">설정 필요</span>
-    </div>
   </div>
   <div class="scroll-body">
-    <div class="card" id="photoCard">
-      <div id="dropArea">
-        <div class="photo-zone" id="photoZone">
-          <input type="file" accept="image/*" multiple capture="environment" id="fileInput" onchange="handleFiles(this.files)">
-          <div class="photo-zone-icon">📷</div>
-          <div class="photo-zone-text">사진 선택 / 촬영</div>
-          <div class="photo-zone-hint">여러 장 동시 선택 가능</div>
-        </div>
+    <div class="card">
+      <div class="photo-zone" id="photoZone">
+        <input type="file" accept="image/*" multiple capture="environment" id="fileInput" onchange="handleFiles(this.files)">
+        <div class="photo-zone-icon">📷</div>
+        <div class="photo-zone-text">사진 선택 / 촬영</div>
+        <div class="photo-zone-hint">여러 장 동시 선택 가능</div>
       </div>
       <div class="preview-grid" id="previewGrid" style="display:none"></div>
     </div>
@@ -109,7 +89,7 @@ textarea{resize:none;min-height:72px;}
       <div class="field-inner" style="padding-top:8px">
         <textarea id="desc" placeholder="예) 방학역 환기구 배근 현황&#10;예) 비개착 구간 지보공 설치 완료" rows="3" oninput="updateFilename()"></textarea>
       </div>
-      <div class="filename-preview">🗂 <span id="previewName">20260328_설명입력.jpg</span></div>
+      <div class="filename-preview">🗂 <span id="previewName">20260330_설명입력.jpg</span></div>
     </div>
     <div class="card">
       <div class="date-bar">
@@ -126,53 +106,25 @@ textarea{resize:none;min-height:72px;}
     </div>
   </div>
   <div class="bottom-bar">
-    <button class="upload-btn" id="uploadBtn" onclick="startUpload()" disabled>☁️ Google Drive에 저장</button>
-  </div>
-</div>
-
-<div class="modal-overlay" id="settingsModal" onclick="closeSettingsOnBg(event)">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title">⚙️ Google Drive 연결 설정</div>
-    <div class="modal-note">OAuth 클라이언트 ID와 API 키를 입력하세요.</div>
-    <div class="modal-field">
-      <div class="modal-label">OAuth 클라이언트 ID</div>
-      <input type="text" id="inputClientId" placeholder="xxxx.apps.googleusercontent.com">
-    </div>
-    <div class="modal-field">
-      <div class="modal-label">API 키</div>
-      <input type="text" id="inputApiKey" placeholder="AIza...">
-    </div>
-    <div class="modal-field">
-      <div class="modal-label">저장 폴더 이름</div>
-      <input type="text" id="inputFolder" placeholder="우이신설연장선_현장사진">
-    </div>
-    <button class="modal-btn" onclick="saveSettings()">저장 후 로그인</button>
+    <button class="upload-btn" id="uploadBtn" onclick="startUpload()" disabled>
+      ☁️ Google Drive에 저장
+    </button>
   </div>
 </div>
 
 <script>
-const SHEET_NAME = '우이신설연장선_현장사진목록';
-let CFG = {
-  clientId:   localStorage.getItem('cfg_clientId')  || '793231860253-if6tnc2m7c7o86s3phsgbapihnemfin3.apps.googleusercontent.com',
-  apiKey:     localStorage.getItem('cfg_apiKey')    || 'AIzaSyAEf-l5xHWmluxq3N9eiSOZRTd9_nFvQ7c',
-  folderName: localStorage.getItem('cfg_folder')    || '우이신설연장선_현장사진',
-};
-let accessToken=null, tokenClient=null, files=[];
+// ── Apps Script 웹앱 URL ──
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwfpZGVHmAxXQhXc4wBDuE7w1ZWT5ny9HLJiTDT8Am7iBvQio2mIP2Fyg_eo_6zKBrxWw/exec';
 
-// ── 날짜/시간 (KST) ──
+let files = [];
+
+// ── 날짜 ──
 function nowKST() {
   const d = new Date(Date.now() + 9*60*60*1000);
-  const ymd  = d.toISOString().slice(0,10);
-  const time = d.toISOString().slice(11,16);
-  return { ymd, time, full: ymd+' '+time };
+  return d.toISOString().slice(0,10);
 }
-function todayCompact() { return nowKST().ymd.replace(/-/g,''); }
-function monthTabName() {
-  const d = new Date(Date.now()+9*60*60*1000);
-  return `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}`;
-}
-document.getElementById('dateVal').textContent = nowKST().ymd;
+function todayCompact() { return nowKST().replace(/-/g,''); }
+document.getElementById('dateVal').textContent = nowKST();
 
 // ── 파일명 미리보기 ──
 function updateFilename() {
@@ -188,10 +140,13 @@ function handleFiles(fl) {
   for (const f of fl)
     if (!files.find(x=>x.file.name===f.name&&x.file.size===f.size))
       files.push({file:f, url:URL.createObjectURL(f)});
-  renderGrid(); updateFilename(); maybeEnableBtn();
+  renderGrid(); updateFilename();
+  document.getElementById('uploadBtn').disabled = files.length === 0;
 }
+
 function renderGrid() {
-  const grid=document.getElementById('previewGrid'), zone=document.getElementById('photoZone');
+  const grid = document.getElementById('previewGrid');
+  const zone = document.getElementById('photoZone');
   if (!files.length) { grid.style.display='none'; zone.style.display=''; return; }
   zone.style.display='none'; grid.style.display='grid'; grid.innerHTML='';
   files.forEach(({url},i)=>{
@@ -203,229 +158,89 @@ function renderGrid() {
   add.innerHTML=`<input type="file" accept="image/*" multiple onchange="handleFiles(this.files)">+`;
   grid.appendChild(add);
 }
+
 function removeFile(i) {
   URL.revokeObjectURL(files[i].url); files.splice(i,1);
   renderGrid(); updateFilename();
-  if (!files.length) document.getElementById('uploadBtn').disabled=true;
-}
-
-// ── Google API ──
-function loadGapi() {
-  const s1=document.createElement('script');
-  s1.src='https://apis.google.com/js/api.js';
-  s1.onload=()=>gapi.load('client',async()=>{
-    await gapi.client.init({
-      apiKey:CFG.apiKey,
-      discoveryDocs:['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest','https://sheets.googleapis.com/$discovery/rest?version=v4']
-    });
-    initTokenClient();
-  });
-  document.head.appendChild(s1);
-  const s2=document.createElement('script');
-  s2.src='https://accounts.google.com/gsi/client';
-  document.head.appendChild(s2);
-}
-function initTokenClient() {
-  if (!window.google) { setTimeout(initTokenClient,300); return; }
-  tokenClient=google.accounts.oauth2.initTokenClient({
-    client_id:CFG.clientId,
-    scope:'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets',
-    callback:resp=>{
-      if (resp.error){alert('로그인 실패: '+resp.error);return;}
-      accessToken=resp.access_token;
-      gapi.client.setToken({access_token:accessToken});
-      setConnected(true); maybeEnableBtn();
-      document.getElementById('settingsModal').classList.remove('show');
-    }
-  });
-  tokenClient.requestAccessToken({prompt:'consent'});
-}
-function setConnected(ok) {
-  document.getElementById('authBadge').classList.toggle('connected',ok);
-  document.getElementById('authLabel').textContent=ok?'연결됨':'설정 필요';
-}
-function maybeEnableBtn() {
-  document.getElementById('uploadBtn').disabled=!(accessToken&&files.length);
-}
-
-async function ensureToken() {
-  return new Promise((resolve, reject) => {
-    tokenClient.requestAccessToken({prompt:''});
-    const orig = tokenClient.callback;
-    tokenClient.callback = (resp) => {
-      if (resp.error) { reject(resp.error); return; }
-      accessToken = resp.access_token;
-      gapi.client.setToken({access_token: accessToken});
-      setConnected(true);
-      resolve();
-    };
-  });
+  document.getElementById('uploadBtn').disabled = files.length === 0;
 }
 
 // ── 업로드 ──
 async function startUpload() {
   if (!files.length) return;
-  // 토큰 자동 갱신 (만료 시 재발급, 팝업 없이)
-  try {
-    await new Promise((resolve, reject) => {
-      tokenClient.requestAccessToken({prompt:''});
-      const origCb = tokenClient.callback;
-      tokenClient.callback = (resp) => {
-        tokenClient.callback = origCb;
-        if (resp.error) { reject(resp.error); return; }
-        accessToken = resp.access_token;
-        gapi.client.setToken({access_token: accessToken});
-        setConnected(true);
-        resolve();
-      };
-    });
-  } catch(e) {
-    addLog('❌','로그인이 필요합니다. 상단 설정 버튼을 눌러주세요.');
-    return;
-  }
-  const desc=document.getElementById('desc').value.trim();
-  const safe=desc?desc.replace(/[\/\\:*?"<>| \t]/g,'').slice(0,30):'사진';
-  document.getElementById('uploadBtn').disabled=true;
+  const desc = document.getElementById('desc').value.trim();
+  const safe = desc ? desc.replace(/[\/\\:*?"<>| \t]/g,'').slice(0,30) : '사진';
+
+  document.getElementById('uploadBtn').disabled = true;
   document.getElementById('progressCard').classList.add('show');
-  document.getElementById('logContainer').innerHTML='';
-  try {
-    setProgress(5,'폴더 및 시트 확인 중...');
-    const folderId = await getOrCreateFolder(CFG.folderName,'root');
-    const sheetId  = await getOrCreateSheet();
-    const tabName  = monthTabName();
-    await getOrCreateMonthTab(sheetId, tabName);
-    const {full:datetime} = nowKST();
+  document.getElementById('logContainer').innerHTML = '';
 
-    for (let i=0;i<files.length;i++) {
-      const {file}=files[i];
-      setProgress(Math.round(10+(i/files.length)*80),`업로드 중 (${i+1}/${files.length})`);
-      const ext  = file.name.split('.').pop();
-      const num  = files.length>1?`_${String(i+1).padStart(2,'0')}`:'';
-      const fname= `${todayCompact()}_${safe}${num}.${ext}`;
-      const id   = await uploadFile(file,fname,folderId);
-      const link = `https://drive.google.com/file/d/${id}/view`;
-      await appendToSheet(sheetId,tabName,datetime,desc||fname,link,id);
-      addLog('✅',fname,link);
-    }
-    setProgress(100,`완료 — ${files.length}장 저장 + 시트 기록됨`);
-    files=[]; renderGrid(); updateFilename();
-    document.getElementById('desc').value='';
-  } catch(e) {
-    console.error(e);
-    addLog('❌','오류: '+(e.message||e));
-    setProgress(0,'업로드 실패');
-  }
-  document.getElementById('uploadBtn').disabled=true;
-}
+  let successCount = 0;
 
-// ── Drive 폴더 ──
-async function getOrCreateFolder(name,parent) {
-  const q=`name='${name}' and mimeType='application/vnd.google-apps.folder' and '${parent}' in parents and trashed=false`;
-  const r=await gapi.client.drive.files.list({q,fields:'files(id)',spaces:'drive'});
-  if (r.result.files.length) return r.result.files[0].id;
-  const c=await gapi.client.drive.files.create({resource:{name,mimeType:'application/vnd.google-apps.folder',parents:[parent]},fields:'id'});
-  return c.result.id;
-}
-async function uploadFile(file,fname,folderId) {
-  const form=new FormData();
-  form.append('metadata',new Blob([JSON.stringify({name:fname,parents:[folderId]})],{type:'application/json'}));
-  form.append('file',file);
-  const r=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',{method:'POST',headers:{Authorization:`Bearer ${accessToken}`},body:form});
-  if (!r.ok) throw new Error('HTTP '+r.status);
-  const {id} = await r.json();
-  // 링크 있는 사람 누구나 볼 수 있도록 권한 설정
-  await fetch(`https://www.googleapis.com/drive/v3/files/${id}/permissions`,{
-    method:'POST',
-    headers:{Authorization:`Bearer ${accessToken}`,'Content-Type':'application/json'},
-    body:JSON.stringify({role:'reader',type:'anyone'})
-  });
-  return id;
-}
+  for (let i = 0; i < files.length; i++) {
+    const {file} = files[i];
+    const pct = Math.round(10 + (i / files.length) * 85);
+    setProgress(pct, `업로드 중 (${i+1}/${files.length})`);
 
-// ── Sheets ──
-async function getOrCreateSheet() {
-  const cached=localStorage.getItem('sheetId');
-  if (cached) {
+    const ext   = file.name.split('.').pop();
+    const num   = files.length > 1 ? `_${String(i+1).padStart(2,'0')}` : '';
+    const fname = `${todayCompact()}_${safe}${num}.${ext}`;
+
     try {
-      const chk=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${cached}?fields=spreadsheetId`,{headers:{Authorization:`Bearer ${accessToken}`}});
-      if (chk.ok) return cached;
-    } catch(e){}
-    localStorage.removeItem('sheetId');
+      // 파일을 base64로 변환
+      const base64 = await toBase64(file);
+
+      // Apps Script로 전송
+      const res = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          image:    base64,
+          mimeType: file.type,
+          filename: fname,
+          desc:     desc || fname,
+        })
+      });
+
+      const data = await res.json();
+      if (data.ok) {
+        addLog('✅', fname, data.fileUrl);
+        successCount++;
+      } else {
+        addLog('❌', fname + ' — ' + (data.error || '오류'));
+      }
+    } catch(e) {
+      addLog('❌', fname + ' — ' + e.message);
+    }
   }
-  const q=`name='${SHEET_NAME}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false`;
-  const r=await gapi.client.drive.files.list({q,fields:'files(id)',spaces:'drive'});
-  if (r.result.files.length) { localStorage.setItem('sheetId',r.result.files[0].id); return r.result.files[0].id; }
-  const res=await fetch('https://sheets.googleapis.com/v4/spreadsheets',{
-    method:'POST',headers:{Authorization:`Bearer ${accessToken}`,'Content-Type':'application/json'},
-    body:JSON.stringify({properties:{title:SHEET_NAME}})
-  });
-  const data=await res.json();
-  localStorage.setItem('sheetId',data.spreadsheetId);
-  addLog('📊',`시트 생성됨: ${SHEET_NAME}`,`https://docs.google.com/spreadsheets/d/${data.spreadsheetId}/edit`);
-  return data.spreadsheetId;
+
+  setProgress(100, `완료 — ${successCount}/${files.length}장 저장됨`);
+  files = []; renderGrid(); updateFilename();
+  document.getElementById('desc').value = '';
+  document.getElementById('uploadBtn').disabled = true;
 }
-async function getOrCreateMonthTab(sheetId,tabName) {
-  const r=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}?fields=sheets.properties`,{headers:{Authorization:`Bearer ${accessToken}`}});
-  const data=await r.json();
-  const existing=(data.sheets||[]).find(s=>s.properties.title===tabName);
-  if (existing) return existing.properties.sheetId;
-  const res=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}:batchUpdate`,{
-    method:'POST',headers:{Authorization:`Bearer ${accessToken}`,'Content-Type':'application/json'},
-    body:JSON.stringify({requests:[{addSheet:{properties:{title:tabName}}}]})
-  });
-  const added=await res.json();
-  const newSheetId=added.replies[0].addSheet.properties.sheetId;
-  await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(tabName)}!A1:C1?valueInputOption=USER_ENTERED`,{
-    method:'PUT',headers:{Authorization:`Bearer ${accessToken}`,'Content-Type':'application/json'},
-    body:JSON.stringify({values:[['날짜·시간','사진설명','Drive 링크','사진']]})
-  });
-  await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}:batchUpdate`,{
-    method:'POST',headers:{Authorization:`Bearer ${accessToken}`,'Content-Type':'application/json'},
-    body:JSON.stringify({requests:[
-      {repeatCell:{range:{sheetId:newSheetId,startRowIndex:0,endRowIndex:1},cell:{userEnteredFormat:{backgroundColor:{red:0.831,green:0.314,blue:0.039},textFormat:{bold:true,foregroundColor:{red:1,green:1,blue:1},fontSize:11},horizontalAlignment:'CENTER'}},fields:'userEnteredFormat'}},
-      {updateSheetProperties:{properties:{sheetId:newSheetId,gridProperties:{frozenRowCount:1}},fields:'gridProperties.frozenRowCount'}},
-      {updateDimensionProperties:{range:{sheetId:newSheetId,dimension:'COLUMNS',startIndex:0,endIndex:3},properties:{pixelSize:200},fields:'pixelSize'}}
-    ]})
-  });
-  return newSheetId;
-}
-async function appendToSheet(sheetId,tabName,datetime,desc,link,fileId) {
-  const thumbFormula = `=IMAGE("https://drive.google.com/thumbnail?id=${fileId}&sz=w200")`;
-  await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(tabName)}!A:D:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,{
-    method:'POST',headers:{Authorization:`Bearer ${accessToken}`,'Content-Type':'application/json'},
-    body:JSON.stringify({values:[[datetime,desc,link,thumbFormula]]})
+
+// ── base64 변환 ──
+function toBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload  = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
   });
 }
 
 // ── UI ──
-function setProgress(pct,label){document.getElementById('progFill').style.width=pct+'%';document.getElementById('progLabel').textContent=label;}
-function addLog(icon,name,link){
-  const d=document.createElement('div');d.className='log-item';
+function setProgress(pct, label) {
+  document.getElementById('progFill').style.width = pct+'%';
+  document.getElementById('progLabel').textContent = label;
+}
+function addLog(icon, name, link) {
+  const d = document.createElement('div'); d.className='log-item';
   d.innerHTML=`<span class="log-icon">${icon}</span><div><div class="log-name">${name}</div>${link?`<div class="log-link"><a href="${link}" target="_blank">Drive에서 열기 →</a></div>`:''}</div>`;
   document.getElementById('logContainer').appendChild(d);
 }
-function openSettings(){
-  document.getElementById('inputClientId').value=CFG.clientId;
-  document.getElementById('inputApiKey').value=CFG.apiKey;
-  document.getElementById('inputFolder').value=CFG.folderName;
-  document.getElementById('settingsModal').classList.add('show');
-}
-function closeSettingsOnBg(e){if(e.target===document.getElementById('settingsModal'))document.getElementById('settingsModal').classList.remove('show');}
-function saveSettings(){
-  CFG.clientId=document.getElementById('inputClientId').value.trim();
-  CFG.apiKey=document.getElementById('inputApiKey').value.trim();
-  CFG.folderName=document.getElementById('inputFolder').value.trim()||'우이신설연장선_현장사진';
-  localStorage.setItem('cfg_clientId',CFG.clientId);
-  localStorage.setItem('cfg_apiKey',CFG.apiKey);
-  localStorage.setItem('cfg_folder',CFG.folderName);
-  if (!CFG.clientId||!CFG.apiKey){alert('ID와 API 키를 모두 입력하세요.');return;}
-  loadGapi();
-}
-window.addEventListener('load',()=>{
-  updateFilename();
-  if (CFG.clientId&&CFG.apiKey) loadGapi();
-  else openSettings();
-});
+
+window.addEventListener('load', updateFilename);
 </script>
 </body>
 </html>
